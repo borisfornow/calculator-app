@@ -1,107 +1,81 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+            System.out.println("Server started. Waiting for client...");
 
-        Socket socket = null;
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
-        boolean running = true;
+            Socket socket = serverSocket.accept();
+            System.out.println("Client connected.");
 
-        ServerSocket serverSocket = new ServerSocket(1234);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-        while (true){
+            String message;
 
-            try {
+            while ((message = reader.readLine()) != null) {
+                if (message.equalsIgnoreCase("close")) {
+                    writer.write("Connection closed.\n");
+                    writer.flush();
+                    break;
+                }
 
-                socket = serverSocket.accept();
+                // Expecting input in format: num1 operator num2
+                String[] parts = message.split(" ");
+                if (parts.length != 3) {
+                    writer.write("Invalid format. Use: <num1> <op> <num2>\n");
+                    writer.flush();
+                    continue;
+                }
 
-                inputStreamReader = new InputStreamReader(socket.getInputStream());
-                outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+                try {
+                    int num1 = Integer.parseInt(parts[0]);
+                    String op = parts[1];
+                    int num2 = Integer.parseInt(parts[2]);
+                    int result = 0;
+                    boolean valid = true;
 
-                bufferedReader = new BufferedReader(inputStreamReader);
-                bufferedWriter = new BufferedWriter(outputStreamWriter);
-
-                while (true){
-
-                    String msgfromClient = bufferedReader.readLine();
-
-                    System.out.println("Client: " + msgfromClient);
-
-//                    bufferedWriter.write("MSG Received.");
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
-
-                    if(msgfromClient.equalsIgnoreCase("close"))
-                        break;
-
-                    String num1Str = msgfromClient;
-
-                    String op = msgfromClient;
-
-                    String num2Str = msgfromClient;
-
-                    // Validate numbers
-                    if (!num1Str.matches("-?\\d+") || !num2Str.matches("-?\\d+")) {
-                        System.out.println("Invalid numbers! Please enter digits only.");
-                        continue; // Restart loop
-                    }
-
-                    // Validate operator
-                    if (!op.equals("-") && !op.equals("+") && !op.equals("/") && !op.equals("%") && !op.equals("*")) {
-                        System.out.println("Invalid operator! Use - + / % *");
-                        continue; // Restart loop
-                    }
-
-                    int number1 = Integer.parseInt(num1Str);
-                    int number2 = Integer.parseInt(num2Str);
-                    int ans = 0;
-
-                    // Handle operations
                     switch (op) {
-                        case "-" -> ans = number1 - number2;
-                        case "+" -> ans = number1 + number2;
+                        case "+" -> result = num1 + num2;
+                        case "-" -> result = num1 - num2;
+                        case "*" -> result = num1 * num2;
                         case "/" -> {
-                            if (number2 == 0) {
-                                continue;
+                            if (num2 == 0) {
+                                writer.write("Cannot divide by zero!\n");
+                                valid = false;
+                            } else {
+                                result = num1 / num2;
                             }
-                            ans = number1 / number2;
                         }
                         case "%" -> {
-                            if (number2 == 0) {
-                                continue;
+                            if (num2 == 0) {
+                                writer.write("Cannot modulo by zero!\n");
+                                valid = false;
+                            } else {
+                                result = num1 % num2;
                             }
-                            ans = number1 % number2;
                         }
-                        case "*" -> ans = number1 * number2;
+                        default -> {
+                            writer.write("Invalid operator. Use + - * / %\n");
+                            valid = false;
+                        }
                     }
 
-                    // Ask if user wants to continue
-                    System.out.print("Do you want to calculate again? (yes/no): ");
-                    String again = msgfromClient.trim().toLowerCase();
-                    if (!again.equals("yes")) {
-                        continue;
-                    }
-
+                    if (valid) writer.write("Result: " + result + "\n");
+                } catch (NumberFormatException e) {
+                    writer.write("Invalid number format.\n");
                 }
-                socket.close();
-                inputStreamReader.close();
-                outputStreamWriter.close();
-                bufferedReader.close();
-                bufferedWriter.close();
 
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                writer.flush();
             }
 
+            socket.close();
+            System.out.println("Client disconnected.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
     }
 }

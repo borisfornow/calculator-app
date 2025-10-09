@@ -1,92 +1,42 @@
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
+        try (Socket socket = new Socket("localhost", 1234);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+             Scanner scanner = new Scanner(System.in)) {
 
-        Socket socket = null;
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
+            System.out.println("Connected to server.");
+            System.out.println("Enter calculations in the format: <num1> <op> <num2>");
+            System.out.println("Type 'close' to exit.");
 
-        try{
-            socket = new Socket("localhost", 1234);
+            while (true) {
+                System.out.print("Enter: ");
+                String input = scanner.nextLine();
 
-            inputStreamReader = new InputStreamReader(socket.getInputStream());
-            outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+                writer.write(input);
+                writer.newLine();
+                writer.flush();
 
-            bufferedReader = new BufferedReader(inputStreamReader);
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
-
-            Scanner scanner = new Scanner(System.in);
-
-            while (true){
-
-                String msg = scanner.nextLine();
-                bufferedWriter.write(msg);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-
-                String response = bufferedReader.readLine();
-                System.out.println("Server : " + response);
-
-                if(msg.equalsIgnoreCase("close"))
+                if (input.equalsIgnoreCase("close")) {
+                    System.out.println("Connection closed.");
                     break;
-
-                System.out.print("Enter a number: ");
-                String num1Str = msg;
-
-                System.out.print("Enter an operation (- + / % *): ");
-                String op = msg;
-
-                System.out.print("Enter another number: ");
-                String num2Str = msg;
-
-                int number1 = Integer.parseInt(num1Str);
-                int number2 = Integer.parseInt(num2Str);
-                int ans = 0;
-
-                if (number2 == 0) {
-                    System.out.println("Cannot divide by zero!");
-                }
-                if (number2 == 0) {
-                    System.out.println("Cannot modulo by zero!");
-                }
-                System.out.println("Your answer is: " + ans);
-
-                System.out.print("Do you want to calculate again? (yes/no): ");
-                String again = msg.trim().toLowerCase();
-                if (!again.equals("yes")) {
-
                 }
 
+                String response = reader.readLine();
+                if (response == null) {
+                    System.out.println("Server disconnected.");
+                    break;
+                }
+
+                System.out.println("Server: " + response);
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }finally {
-            try {
-                if (socket != null)
-                    socket.close();
-
-                if(inputStreamReader != null)
-                    inputStreamReader.close();
-
-                if (outputStreamWriter != null)
-                    outputStreamWriter.close();
-
-                if (bufferedReader != null)
-                    bufferedReader.close();
-
-                if (bufferedWriter != null)
-                    bufferedWriter.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            e.printStackTrace();
         }
-
     }
 }
