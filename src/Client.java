@@ -25,7 +25,15 @@ public class Client {
 
             while (true){
 
+                System.out.println("Enter a number: ");
+
+
                 String msg = scanner.nextLine();
+                bufferedWriter.write(msg);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+
+                String num1Str = scanner.nextLine();
                 bufferedWriter.write(msg);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -36,14 +44,18 @@ public class Client {
                 if(msg.equalsIgnoreCase("close"))
                     break;
 
-                System.out.print("Enter a number: ");
-                String num1Str = msg;
 
-                System.out.print("Enter an operation (- + / % *): ");
-                String op = msg;
+                System.out.println("Enter an operation (- + / % *): ");
+                String op = scanner.nextLine();
+                bufferedWriter.write(msg);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
 
-                System.out.print("Enter another number: ");
-                String num2Str = msg;
+                System.out.println("Enter another number: ");
+                String num2Str = scanner.nextLine();
+                bufferedWriter.write(msg);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
 
                 int number1 = Integer.parseInt(num1Str);
                 int number2 = Integer.parseInt(num2Str);
