@@ -1,3 +1,6 @@
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+
 public class BasicOperation {
 
     private String equation;
@@ -7,32 +10,7 @@ public class BasicOperation {
     }
 
     public double calculate() {
-        // Split by spaces (e.g., "3 + 5")
-        String[] parts = equation.split(" ");
-
-        // Basic validation
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Equation must be in the format: number operator number");
-        }
-
-        double num1 = Double.parseDouble(parts[0]);
-        String operator = parts[1];
-        double num2 = Double.parseDouble(parts[2]);
-
-        switch (operator) {
-            case "+":
-                return num1 + num2;
-            case "-":
-                return num1 - num2;
-            case "*":
-                return num1 * num2;
-            case "/":
-                if (num2 == 0) throw new ArithmeticException("Cannot divide by zero");
-                return num1 / num2;
-            case "%":
-                return num1 % num2;
-            default:
-                throw new IllegalArgumentException("Invalid operator: " + operator);
-        }
+        Expression expression = new ExpressionBuilder(equation).build();
+        return expression.evaluate();
     }
 }

@@ -19,13 +19,22 @@
     </properties>
 
     <dependencies>
-        <!-- JUnit 5 for testing -->
-<!--        <dependency>-->
-<!--            <groupId>org.junit.jupiter</groupId>-->
-<!--            <artifactId>junit-jupiter</artifactId>-->
-<!--            <version>5.11.1</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <!-- exp4j for math expression evaluation -->
+        <dependency>
+            <groupId>net.objecthunter</groupId>
+            <artifactId>exp4j</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+
+        <!-- Optional: JUnit 5 for testing -->
+        <!--
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.1</version>
+            <scope>test</scope>
+        </dependency>
+        -->
     </dependencies>
 
     <build>
@@ -41,6 +50,7 @@
                     <release>21</release>
                 </configuration>
             </plugin>
+
             <!-- Maven Surefire Plugin for running tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -49,5 +59,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

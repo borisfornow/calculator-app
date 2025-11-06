@@ -1,6 +1,9 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
@@ -39,11 +42,6 @@ public class Client {
 
                 if(msg.equalsIgnoreCase("close"))
                     break;
-
-                String[] sum = msg.split(" ");
-                for(String i: sum){
-
-                }
 
             }
 
