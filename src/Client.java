@@ -1,6 +1,9 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
@@ -25,7 +28,7 @@ public class Client {
 
             while (true){
 
-                System.out.println("Enter a number: ");
+                System.out.println("Enter an equation: ");
 
 
                 String msg = scanner.nextLine();
@@ -33,47 +36,12 @@ public class Client {
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
 
-                String num1Str = scanner.nextLine();
-                bufferedWriter.write(msg);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
 
                 String response = bufferedReader.readLine();
                 System.out.println("Server : " + response);
 
                 if(msg.equalsIgnoreCase("close"))
                     break;
-
-
-                System.out.println("Enter an operation (- + / % *): ");
-                String op = scanner.nextLine();
-                bufferedWriter.write(msg);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-
-                System.out.println("Enter another number: ");
-                String num2Str = scanner.nextLine();
-                bufferedWriter.write(msg);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-
-                int number1 = Integer.parseInt(num1Str);
-                int number2 = Integer.parseInt(num2Str);
-                int ans = 0;
-
-                if (number2 == 0) {
-                    System.out.println("Cannot divide by zero!");
-                }
-                if (number2 == 0) {
-                    System.out.println("Cannot modulo by zero!");
-                }
-                System.out.println("Your answer is: " + ans);
-
-                System.out.print("Do you want to calculate again? (yes/no): ");
-                String again = msg.trim().toLowerCase();
-                if (!again.equals("yes")) {
-
-                }
 
             }
 
